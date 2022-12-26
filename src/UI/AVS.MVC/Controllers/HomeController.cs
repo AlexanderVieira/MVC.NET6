@@ -1,6 +1,7 @@
 ﻿using AVS.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using AVS.MVC.Extensions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AVS.MVC.Controllers
@@ -29,19 +30,25 @@ namespace AVS.MVC.Controllers
         [Authorize(Roles = "Admin, Coordenador")]
         public IActionResult Recurso()
         {
-            return View();
+            return View("Recurso");
         }
 
         [Authorize(Policy = "Excluir")]
         public IActionResult RecursoClaim()
         {
-            return View();
+            return View("Recurso");
         }
 
         [Authorize(Policy = "Editar")]
         public IActionResult RecursoClaimRequeriment()
         {
-            return View();
+            return View("Recurso");
+        }
+
+        [ClaimAuthorize("Produtos", "Ler")]
+        public IActionResult RecursoClaimCustom()
+        {
+            return View("Recurso");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
