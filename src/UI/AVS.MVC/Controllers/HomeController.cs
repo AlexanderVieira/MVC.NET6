@@ -1,9 +1,11 @@
 ﻿using AVS.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AVS.MVC.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,12 +15,31 @@ namespace AVS.MVC.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin, Coordenador")]
+        public IActionResult Recurso()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "Excluir")]
+        public IActionResult RecursoClaim()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "Editar")]
+        public IActionResult RecursoClaimRequeriment()
         {
             return View();
         }

@@ -1,15 +1,34 @@
 using AVS.MVC.Areas.Identity.Data;
+using AVS.MVC.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ApplicationIdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationIdentityDbContextConnection' not found.");
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
 builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+
+builder.Services.AddSingleton<IAuthorizationHandler, PermissaoRequeridaHandler>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Excluir", policy => policy.RequireClaim("Excluir"));
+    options.AddPolicy("Ler", policy => policy.Requirements.Add(new PermissaoRequerida("Ler")));
+    options.AddPolicy("Editar", policy => policy.Requirements.Add(new PermissaoRequerida("Editar")));
+
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
