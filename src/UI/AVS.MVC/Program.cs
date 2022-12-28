@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using AVS.Data.Context;
+using AVS.Business.Intefaces;
+using AVS.Business.Notificacoes;
+using AVS.Business.Services;
+using AVS.Data.Repository;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +56,16 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<MeuDbContext>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+builder.Services.AddScoped<IEnderecoRepository, EnderecoRepository>();
+//builder.Services.AddSingleton<IValidationAttributeAdapterProvider, MoedaValidationAttributeAdapterProvider>();
+
+builder.Services.AddScoped<INotificador, Notificador>();
+builder.Services.AddScoped<IFornecedorService, FornecedorService>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
 
