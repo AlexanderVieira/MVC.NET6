@@ -3,8 +3,21 @@ using AVS.MVC.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", true, true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
+    .AddEnvironmentVariables();
+
+if (builder.Environment.IsProduction())
+{
+    builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
+}
+
 var connectionString = builder.Configuration.GetConnectionString("ApplicationIdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationIdentityDbContextConnection' not found.");
 
 builder.Services.Configure<CookiePolicyOptions>(options =>

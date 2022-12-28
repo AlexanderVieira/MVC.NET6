@@ -1,3 +1,4 @@
+#nullable enable
 namespace AVS.MVC.Models
 {
     public class ErrorViewModel
